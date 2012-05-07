@@ -1,5 +1,10 @@
 <?php
 
+$slimtimer_api_key = ''; // Your SlimTimer API key
+$slimtimer_email = ''; // Your SlimTimer Email
+$slimtimer_password = ''; // Your SlimTimer Password
+
+
 defined('BASE_PATH') || define('BASE_PATH', realpath(dirname(__FILE__)));
 
 set_include_path(implode(PATH_SEPARATOR, array(
@@ -13,10 +18,10 @@ $autoloader->registerNamespace('SlimTimer_');
 
 
 $authenticator = new SlimTimer_Authenticator();
-$authenticator->setApiKey('d1b1f66a136b3dc3d2b09161f68ba1');
+$authenticator->setApiKey($slimtimer_api_key);
 
-$authenticator->setEmail('c.keithlin@chromemedia.com');
-$authenticator->setPassword('Bru5ucr9');
+$authenticator->setEmail($slimtimer_email);
+$authenticator->setPassword($slimtimer_password);
 
 if ($authenticator->run() === false) {
     echo "not authenticated";
@@ -25,7 +30,7 @@ if ($authenticator->run() === false) {
 
 
 $taskLister = new SlimTimer_TaskLister();
-$taskLister->setApiKey('d1b1f66a136b3dc3d2b09161f68ba1');
+$taskLister->setApiKey($slimtimer_api_key);
 $taskLister->setUserId($authenticator->getUserId());
 $taskLister->setUserToken($authenticator->getUserToken());
 
