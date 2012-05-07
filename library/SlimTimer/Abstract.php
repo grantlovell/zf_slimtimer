@@ -45,4 +45,14 @@ abstract class SlimTimer_Abstract
             return true;
         }
     }
+    
+    protected function generateRequestXml()
+    {
+        $xml = '<?xml version="1.0" encoding="UTF-8"?>
+         <request>
+            <access-token>' . $this->userToken . '</access-token>
+            <api-key>' . $this->apiKey . '</api-key>
+         </request>';
+         return simplexml_load_string($xml);
+    }
 }

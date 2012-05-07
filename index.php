@@ -17,7 +17,7 @@ $autoloader = Zend_Loader_Autoloader::getInstance();
 $autoloader->registerNamespace('SlimTimer_');
 
 
-$authenticator = new SlimTimer_Authenticator();
+$authenticator = new SlimTimer_Authenticate();
 $authenticator->setApiKey($slimtimer_api_key);
 
 $authenticator->setEmail($slimtimer_email);
@@ -29,7 +29,7 @@ if ($authenticator->run() === false) {
 } 
 
 
-$taskLister = new SlimTimer_TaskLister();
+$taskLister = new SlimTimer_TaskList();
 $taskLister->setApiKey($slimtimer_api_key);
 $taskLister->setUserId($authenticator->getUserId());
 $taskLister->setUserToken($authenticator->getUserToken());
