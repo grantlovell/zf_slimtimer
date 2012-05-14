@@ -1,6 +1,6 @@
 <?php
 
-class SlimTimer_TaskUpdate extends SlimTimer_Abstract
+class SlimTimer_Action_TaskUpdate extends SlimTimer_Abstract
 {
     protected $apiPath = "/users/__user_id__/tasks/__task_id__";
     protected $taskId;
@@ -139,7 +139,7 @@ class SlimTimer_TaskUpdate extends SlimTimer_Abstract
     
     protected function parseXml(SimpleXMLElement $xml)
     {
-        $taskMapper = new SlimTimer_TaskMapper();
+        $taskMapper = new SlimTimer_Mapper_Task();
         return $taskMapper->createFromXml($xml);
     }
 }

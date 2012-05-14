@@ -1,6 +1,6 @@
 <?php
 
-class SlimTimer_TimeList extends SlimTimer_Abstract
+class SlimTimer_Action_TimeList extends SlimTimer_Abstract
 {
     protected $apiPath = '/users/___user_id___/time_entries';
     protected $taskId;
@@ -83,7 +83,7 @@ class SlimTimer_TimeList extends SlimTimer_Abstract
     
     protected function parseXml(SimpleXMLElement $xml)
     {
-        $time = new SlimTimer_TimeMapper();
+        $time = new SlimTimer_Mapper_Time();
         return $time->createGroupFromXml($xml);
     }
     

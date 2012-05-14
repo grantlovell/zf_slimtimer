@@ -1,6 +1,6 @@
 <?php
 
-abstract class SlimTimer_DtoAbstract
+abstract class SlimTimer_Model_Abstract
 {
     public function __set($name, $value)
     {

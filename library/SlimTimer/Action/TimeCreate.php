@@ -1,9 +1,8 @@
 <?php
 
-class SlimTimer_TimeUpdate extends SlimTimer_Abstract
+class SlimTimer_Action_TimeCreate extends SlimTimer_Abstract
 {
-    protected $apiPath = "/users/__user_id__/time_entries/__time_entry_id__";
-    protected $time_id;
+    protected $apiPath = "/users/__user_id__/time_entries";
     protected $start_time;
     protected $end_time;
     protected $duration_in_seconds;
@@ -11,15 +10,6 @@ class SlimTimer_TimeUpdate extends SlimTimer_Abstract
     protected $tags;
     protected $comments;
     protected $in_progress;
-    
-    
-    public function setTimeId($value) 
-    {
-        if (!Zend_Validate::is($value, 'Digits')) {
-            throw new InvalidArgumentException("{$value} is not a valid <em>time_entry_id</em>, it must be an integer.");
-        }
-        $this->time_id = (int) $value; 
-    }
     
     public function setStartTime($value) 
     {
@@ -79,7 +69,7 @@ class SlimTimer_TimeUpdate extends SlimTimer_Abstract
         
         $url = $this->apiUrl . $this->apiPath;
         $xml = $this->apiXml;
-        $response = $this->makeRequest($url, $xml, 'PUT');
+        $response = $this->makeRequest($url, $xml, 'POST');
         $result = $this->parseXml($response);
         
         return $result;
@@ -87,10 +77,7 @@ class SlimTimer_TimeUpdate extends SlimTimer_Abstract
     
     protected function buildApiPath()
     {
-        if (!isset($this->time_id)) {
-            throw new Zend_Exception("Processing request failed. <em>time_id</em> must be set.");
-        }
-        $this->apiPath = "/users/{$this->userId}/time_entries/{$this->time_id}";
+        $this->apiPath = "/users/{$this->userId}/time_entries";
     }
     
     protected function buildRequestXml()
@@ -175,7 +162,7 @@ class SlimTimer_TimeUpdate extends SlimTimer_Abstract
     
     protected function parseXml(SimpleXMLElement $xml)
     {
-        $timeMapper = new SlimTimer_TimeMapper();
+        $timeMapper = new SlimTimer_Mapper_Time();
         return $timeMapper->createFromXml($xml);
     }
 }

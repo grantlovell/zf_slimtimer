@@ -1,6 +1,6 @@
 <?php
 
-class SlimTimer_TaskMapper
+class SlimTimer_Mapper_Task
 {
     public function createGroupFromXml(SimpleXMLElement $xml)
     {
@@ -13,8 +13,8 @@ class SlimTimer_TaskMapper
     
     public function createFromXml(SimpleXMLElement $xml)
     {
-        $personMapper = new SlimTimer_PersonMapper();
-        $task = new SlimTimer_Task();
+        $personMapper = new SlimTimer_Mapper_Person();
+        $task = new SlimTimer_Model_Task();
         $task->id = (string) $xml->id;
         $task->name = (string) $xml->name;
         $task->role = (string) $xml->role;

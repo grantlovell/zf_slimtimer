@@ -1,6 +1,6 @@
 <?php
 
-class SlimTimer_TimeDelete extends SlimTimer_Abstract
+class SlimTimer_Action_TimeShow extends SlimTimer_Abstract
 {
     protected $apiPath = "/users/__user_id__/time_entries/__time_entry_id__";
     protected $timeId;
@@ -17,7 +17,9 @@ class SlimTimer_TimeDelete extends SlimTimer_Abstract
     {
         $this->buildApiPath();
         $response = $this->request();
-        return true;
+        $task = $this->parseXml($response);
+        
+        return $task;
     }
     
     protected function buildApiPath()
@@ -33,6 +35,12 @@ class SlimTimer_TimeDelete extends SlimTimer_Abstract
     protected function request()
     {
         $url = $this->apiUrl . $this->apiPath;
-        return $this->makeRequest($url, '', 'DELETE');
+        return $this->makeRequest($url, '', 'GET');
+    }
+    
+    protected function parseXml(SimpleXMLElement $xml)
+    {
+        $taskMapper = new SlimTimer_Mapper_Time();
+        return $taskMapper->createFromXml($xml);
     }
 }

@@ -1,6 +1,6 @@
 <?php
 
-class SlimTimer_PersonMapper
+class SlimTimer_Mapper_Person
 {
     public function createGroupFromXml(SimpleXMLElement $xml)
     {
@@ -15,7 +15,7 @@ class SlimTimer_PersonMapper
     
     public function createFromXml(SimpleXMLElement $xml)
     {
-        $person = new SlimTimer_Person();
+        $person = new SlimTimer_Model_Person();
         if ($id = (int) $xml->{'user-id'}) {
             $person->user_id = $id;
         }

@@ -1,6 +1,6 @@
 <?php
 
-class SlimTimer_Time extends SlimTimer_DtoAbstract
+class SlimTimer_Model_Time extends SlimTimer_Model_Abstract
 {
     protected $_id;
     protected $_start_time;

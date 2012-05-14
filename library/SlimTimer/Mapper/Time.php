@@ -1,6 +1,6 @@
 <?php
 
-class SlimTimer_TimeMapper
+class SlimTimer_Mapper_Time
 {
     public function createGroupFromXml(SimpleXMLElement $xml)
     {
@@ -13,8 +13,8 @@ class SlimTimer_TimeMapper
     
     public function createFromXml(SimpleXMLElement $xml)
     {
-        $taskMapper = new SlimTimer_TaskMapper();
-        $time = new SlimTimer_Time();
+        $taskMapper = new SlimTimer_Mapper_Task();
+        $time = new SlimTimer_Model_Time();
         $time->id = (int) $xml->id;
         $time->start_time = date('Y-m-d H:i:s', strtotime($xml->{'start-time'}));
         $time->end_time = date('Y-m-d H:i:s', strtotime($xml->{'end-time'}));

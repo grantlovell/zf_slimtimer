@@ -4,15 +4,13 @@ class SlimTimer_SlimTimer extends SlimTimer_Abstract
 {
     public function authenticate($email, $password)
     {
-        $adapter = new SlimTimer_Authenticate();
+        $adapter = new SlimTimer_Action_Authenticate();
         $adapter->setApiKey($this->apiKey);
         
         $adapter->setEmail($email);
         $adapter->setPassword($password);
         
-        if ($this->run($adapter) !== true) {
-            return false;
-        }
+        $this->run($adapter);
         
         $this->setUserId($adapter->getUserId());
         $this->setUserToken($adapter->getUserToken());
@@ -22,7 +20,7 @@ class SlimTimer_SlimTimer extends SlimTimer_Abstract
     
     public function taskList($show_completed = null, $role = array(), $offset = null)
     {
-        $adapter = new SlimTimer_TaskList();
+        $adapter = new SlimTimer_Action_TaskList();
         $this->setUpAdapter($adapter);
         
         if (isset($show_completed)) {
@@ -41,7 +39,7 @@ class SlimTimer_SlimTimer extends SlimTimer_Abstract
     public function taskCreate($name, $tags=null, $coworker_emails=null, $reporter_emails=null, $completed_on=null)
     {
         try {
-            $adapter = new SlimTimer_TaskCreate();
+            $adapter = new SlimTimer_Action_TaskCreate();
             $this->setUpAdapter($adapter);
             
             $adapter->setName($name);
@@ -67,7 +65,7 @@ class SlimTimer_SlimTimer extends SlimTimer_Abstract
     
     public function taskShow($task_id)
     {
-        $adapter = new SlimTimer_TaskShow();
+        $adapter = new SlimTimer_Action_TaskShow();
         $this->setUpAdapter($adapter);
         
         $adapter->setTaskId($task_id);
@@ -77,7 +75,7 @@ class SlimTimer_SlimTimer extends SlimTimer_Abstract
     
     public function taskUpdate($task_id, $name, $tags = array(), $coworker_emails = array(), $reporter_emails = array(), $completed_on = null)
     {
-        $adapter = new SlimTimer_TaskUpdate();
+        $adapter = new SlimTimer_Action_TaskUpdate();
         $this->setUpAdapter($adapter);
         
         $adapter->setTaskId($task_id);
@@ -100,7 +98,7 @@ class SlimTimer_SlimTimer extends SlimTimer_Abstract
     
     public function taskDelete($task_id)
     {
-        $adapter = new SlimTimer_TaskDelete();
+        $adapter = new SlimTimer_Action_TaskDelete();
         $this->setUpAdapter($adapter);
         
         $adapter->setTaskId($task_id);
@@ -122,7 +120,7 @@ class SlimTimer_SlimTimer extends SlimTimer_Abstract
     
     public function timeList($offset=null, $range_start=null, $range_end=null)
     {
-        $adapter = new SlimTimer_TimeList();
+        $adapter = new SlimTimer_Action_TimeList();
         $this->setUpAdapter($adapter);
         
         if (isset($offset)) {
@@ -140,7 +138,7 @@ class SlimTimer_SlimTimer extends SlimTimer_Abstract
     
     public function timeListByTask($task_id, $offset=null, $range_start=null, $range_end=null)
     {
-        $adapter = new SlimTimer_TimeList();
+        $adapter = new SlimTimer_Action_TimeList();
         $this->setUpAdapter($adapter);
         
         $adapter->setTaskId($task_id);
@@ -160,7 +158,7 @@ class SlimTimer_SlimTimer extends SlimTimer_Abstract
     
     public function timeCreate($start_time, $duration_in_seconds, $task_id, $end_time = null, $tags = array(), $comments = null, $in_progress = null)
     {
-        $adapter = new SlimTimer_TimeCreate();
+        $adapter = new SlimTimer_Action_TimeCreate();
         $this->setUpAdapter($adapter);
         
         $adapter->setStartTime($start_time);
@@ -190,7 +188,7 @@ class SlimTimer_SlimTimer extends SlimTimer_Abstract
     
     public function timeShow($time_id)
     {
-        $adapter = new SlimTimer_TimeShow();
+        $adapter = new SlimTimer_Action_TimeShow();
         $this->setUpAdapter($adapter);
         
         $adapter->setTimeId($time_id);
@@ -200,7 +198,7 @@ class SlimTimer_SlimTimer extends SlimTimer_Abstract
     
     public function timeUpdate($time_id, $start_time, $duration_in_seconds, $task_id, $end_time = null, array $tags = array(), $comments = null, $in_progress = null)
     {
-        $adapter = new SlimTimer_TimeUpdate();
+        $adapter = new SlimTimer_Action_TimeUpdate();
         $this->setUpAdapter($adapter);
         
         $adapter->setTimeId($time_id);
@@ -238,7 +236,7 @@ class SlimTimer_SlimTimer extends SlimTimer_Abstract
     
     public function timeDelete($time_id)
     {
-        $adapter = new SlimTimer_TimeDelete();
+        $adapter = new SlimTimer_Action_TimeDelete();
         $this->setUpAdapter($adapter);
         
         $adapter->setTimeId($time_id);

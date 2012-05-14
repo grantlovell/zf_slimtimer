@@ -1,6 +1,6 @@
 <?php
 
-class SlimTimer_Task extends SlimTimer_DtoAbstract
+class SlimTimer_Model_Task extends SlimTimer_Model_Abstract
 {
     protected $_id;
     protected $_name;
