@@ -3,6 +3,7 @@
 abstract class SlimTimer_Abstract
 {
     protected $apiUrl = 'http://slimtimer.com';
+    protected $apiXml;
     protected $apiKey;
     
     protected $userId;
@@ -57,13 +58,16 @@ abstract class SlimTimer_Abstract
         );
         $client->setRawData($xml, 'text/xml');
         $response = $client->request($method);
-        $response = $this->parseResponse($response->getBody());
+        $headers = $response->getHeaders();
+        $body = $response->getBody(); 
+        $output = $this->parseResponse($body);
         
-        if ($requestError = $this->isRequestError($response)) {
+        if ($headers['Status'] !== '200 OK') {
+            $requestError = $this->getRequestError($output);
             throw new Zend_Exception("Processing request failed. {$requestError}");
         }
         
-        return $response;
+        return $output;
     }
     
     protected function parseResponse($response)
@@ -71,7 +75,7 @@ abstract class SlimTimer_Abstract
         return simplexml_load_string($response);
     }
     
-    protected function isRequestError($result)
+    protected function getRequestError($result)
     {
         if (isset($result->error)) {
             return (string) $result->error;

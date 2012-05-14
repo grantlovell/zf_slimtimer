@@ -2,102 +2,131 @@
 
 class SlimTimer_TaskCreate extends SlimTimer_Abstract
 {
-    protected $apiPath;
-    
+    protected $apiPath = "/users/__user_id__/tasks/__task_id__";
     protected $name;
     protected $tags = array();
     protected $coworker_emails = array();
     protected $reporter_emails = array();
     protected $completed_on;
     
-    public function setName($string) { $this->name = $string; }
-    public function setTags(array $tags) { $this->tags = $tags; }
-    public function addTag($string) { $this->tags[] = $string; }
-    public function setCoworkerEmails(array $coworker_emails) { $this->coworker_emails = $coworker_emails; }
-    public function addCoworkerEmail($string) { $this->coworker_emails[] = $string; }
-    public function setReporterEmails(array $reporter_emails) { $this->reporter_emails = $reporter_emails; }
-    public function addReporterEmail($string) { $this->reporter_emails[] = $string; }
-    public function setCompleted($date) { $this->completed_on = date('Y-m-d H:i:s', strtotime($date)); }
+    public function setName($value) 
+    {
+        $this->name = (string) $value; 
+    }
+    
+    public function setTags(array $values) 
+    {
+        $this->tags = implode(",", $values);
+    }
+    
+    public function setCoworkerEmails(array $values) 
+    {
+        foreach ($values AS $value) {
+            if (!Zend_Validate::is($value, 'EmailAddress')) {
+                throw new InvalidArgumentException("{$value} is not an a valid coworker email address.");
+            }
+        }
+        $this->coworker_emails = implode(",", $values); 
+    }
+    
+    public function setReporterEmails(array $values) 
+    {
+        foreach ($values AS $value) {
+            if (!Zend_Validate::is($value, 'EmailAddress')) {
+                throw new InvalidArgumentException("{$value} is not an a valid reporter email address.");
+            }
+        }
+        $this->reporter_emails = implode(",", $values);  
+    }
+    public function setCompletedOn($value) 
+    {
+        if (!Zend_Validate::is($value, 'Date')) {
+            throw new InvalidArgumentException("{$value} is not a valid completed on date/time.");
+        }
+        $this->completed_on = date('Y-m-d H:i:s', strtotime($value)); 
+    }
     
     public function run()
     {
-        $this->apiPath = "/users/{$this->userId}/tasks";
+        $this->buildApiPath();
+        $this->buildRequestXml();
         
         $url = $this->apiUrl . $this->apiPath;
-        $response = $this->makeRequest($url, $this->generateRequestXml(), 'POST');
-        $result = $this->parseResponse($response);
+        $xml = $this->apiXml;
+        $response = $this->makeRequest($url, $xml, 'POST');
+        $result = $this->parseXml($response);
         
-        if ($this->isRequestError($result) === true) {
-            return false;
-        }
-        
-        return true;
+        return $result;
     }
     
-    protected function generateRequestXml()
+    protected function buildApiPath()
     {
-        $xml = parent::generateRequestXml();
+        $this->apiPath = "/users/{$this->userId}/tasks";
+    }
+    
+    protected function buildRequestXml()
+    {
+        if (!isset($this->name)) {
+            throw new Zend_Exception("Processing request failed. Name must be set.");
+        }
         
-        $task = $this->generateNameXml($xml);
+        $xml = parent::generateRequestXml();
+        $taskXml = $this->buildTaskXml($xml);
+        
+        $this->buildNameXml($taskXml);
         
         if ($this->tags) {
-            $this->genenrateTagsXml($task);
+            $this->buildTagsXml($taskXml);
         }
         
         if ($this->coworker_emails) {
-            $this->genenrateCoworkerXml($task);
+            $this->buildCoworkersXml($taskXml);
         }
         
         if ($this->reporter_emails) {
-            $this->genenrateReporterXml($task);
+            $this->buildReportersXml($taskXml);
         }
         
-        if ($this->completed_on) {
-            $this->genenrateCompletedXml($task);
+        if (isset($this->completed_on)) {
+            $this->buildCompletedOnXml($taskXml);
         }
         
-        return $xml->asXML();
+        $this->apiXml = $xml->asXML();
     }
     
-    protected function generateNameXml($xml)
+    protected function buildTaskXml($xml)
     {
-        $task = $xml->addChild('task');
-        $task->addChild('name', $this->name);
-        return $task;
+        return $xml->addChild('task');
     }
     
-    protected function genenrateTagsXml($xml)
+    protected function buildNameXml($xml)
     {
-        $tags = '';
-        foreach ($this->tags AS $tag) {
-            $tags .= "{$tag}, ";
-        }
-        $tags = substr($tags, 0, -2);
-        $xml->addChild('tags', $tags);
+        $xml->addChild('name', $this->name);
     }
     
-    protected function genenrateCoworkerXml($xml)
+    protected function buildTagsXml($xml)
     {
-        $coworker_emails = '';
-        foreach ($this->coworker_emails AS $coworker_email) {
-            $coworker_emails .= "{$coworker_email}, ";
-        }
-        $coworker_emails = substr($coworker_emails, 0, -2);
-        $xml->addChild('coworker-emails', $coworker_emails);
+        $xml->addChild('tags', $this->tags);
     }
     
-    protected function genenrateReporterXml($xml)
+    protected function buildCoworkersXml($xml)
     {
-        $reporter_emails = '';
-        foreach ($this->reporter_emails AS $reporter_email) {
-            $reporter_emails .= "{$reporter_email}, ";
-        }
-        $reporter_emails = substr($reporter_emails, 0, -2);
-        $xml->addChild('reporter-emails', $reporter_emails);
+        $xml->addChild('coworker-emails', $this->coworker_emails);
     }
     
-    protected function genenrateCompletedXml($xml)
+    protected function buildReportersXml($xml)
+    {
+        $xml->addChild('reporter-emails', $this->reporter_emails);
+    }
+    
+    protected function buildCompletedOnXml($xml)
     {
         $xml->addChild('completed-on', $this->completed_on);
+    }
+    
+    protected function parseXml(SimpleXMLElement $xml)
+    {
+        $taskMapper = new SlimTimer_TaskMapper();
+        return $taskMapper->createFromXml($xml);
     }
 }

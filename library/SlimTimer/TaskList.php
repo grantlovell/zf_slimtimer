@@ -27,7 +27,7 @@ class SlimTimer_TaskList extends SlimTimer_Abstract
                 throw new InvalidArgumentException("{$role} is not a valid role. Role must be 'owner', 'coworker', or 'reporter'.");
             }
         }
-        $this->role = implode(",", $roles);; 
+        $this->role = implode(",", $roles); 
     }
     
     public function setOffset($value) 

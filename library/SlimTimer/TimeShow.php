@@ -1,16 +1,16 @@
 <?php
 
-class SlimTimer_TaskShow extends SlimTimer_Abstract
+class SlimTimer_TimeShow extends SlimTimer_Abstract
 {
-    protected $apiPath = "/users/__user_id__/tasks/__task_id__";
-    protected $taskId;
+    protected $apiPath = "/users/__user_id__/time_entries/__time_entry_id__";
+    protected $timeId;
     
-    public function setTaskId($value) 
+    public function setTimeId($value) 
     {
         if (!Zend_Validate::is($value, 'Digits')) {
-            throw new InvalidArgumentException("{$value} is not a valid task id. Task id must be an integer.");
+            throw new InvalidArgumentException("{$value} is not a valid time entry id. Time entry id must be an integer.");
         }
-        $this->taskId = (int) $value; 
+        $this->timeId = (int) $value; 
     }
     
     public function run()
@@ -24,11 +24,11 @@ class SlimTimer_TaskShow extends SlimTimer_Abstract
     
     protected function buildApiPath()
     {
-        if (!isset($this->taskId)) {
-            throw new Zend_Exception("Processing request failed. Task id must be set.");
+        if (!isset($this->timeId)) {
+            throw new Zend_Exception("Processing request failed. Time entry id must be set.");
         }
         
-        $this->apiPath = "/users/{$this->userId}/tasks/{$this->taskId}";
+        $this->apiPath = "/users/{$this->userId}/time_entries/{$this->timeId}";
         $this->apiPath .= "?api_key={$this->apiKey}&access_token={$this->userToken}";
     }
     
@@ -40,7 +40,7 @@ class SlimTimer_TaskShow extends SlimTimer_Abstract
     
     protected function parseXml(SimpleXMLElement $xml)
     {
-        $taskMapper = new SlimTimer_TaskMapper();
+        $taskMapper = new SlimTimer_TimeMapper();
         return $taskMapper->createFromXml($xml);
     }
 }

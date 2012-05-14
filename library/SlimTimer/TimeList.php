@@ -11,7 +11,7 @@ class SlimTimer_TimeList extends SlimTimer_Abstract
     public function setTaskId($value) 
     {
         if (!Zend_Validate::is($value, 'Digits')) {
-            throw new InvalidArgumentException("{$value} is not an integer.");
+            throw new InvalidArgumentException("{$value} is not a valid task id. Task id must be an integer.");
         }
         $this->taskId = (int) $value; 
     }
@@ -19,7 +19,7 @@ class SlimTimer_TimeList extends SlimTimer_Abstract
     public function setOffset($value) 
     {
         if (!Zend_Validate::is($value, 'Digits')) {
-            throw new InvalidArgumentException("{$value} is not an integer.");
+            throw new InvalidArgumentException("{$value} is not a valid offset. Offset must be an integer.");
         }
         $this->offset = (int) $value;
     }
@@ -27,7 +27,7 @@ class SlimTimer_TimeList extends SlimTimer_Abstract
     public function setRangeStart($value) 
     {
         if (!Zend_Validate::is($value, 'Date')) {
-            throw new InvalidArgumentException("{$value} is not recognized as a date.");
+            throw new InvalidArgumentException("{$value} is not a valid range start. Range start must be a date");
         }
         $this->rangeStart = date('Y-m-d', strtotime($value)); 
     }
@@ -35,7 +35,7 @@ class SlimTimer_TimeList extends SlimTimer_Abstract
     public function setRangeEnd($value) 
     {
         if (!Zend_Validate::is($value, 'Date')) {
-            throw new InvalidArgumentException("{$value} is not recognized as a date.");
+            throw new InvalidArgumentException("{$value} is not a valid range end. Range end must be a date");
         }
         $this->rangeEnd = date('Y-m-d', strtotime($value)); 
     }
