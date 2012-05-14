@@ -8,21 +8,48 @@ abstract class SlimTimer_Abstract
     protected $userId;
     protected $userToken;
     
+    protected $timeout = 60;
     protected $responseBody;
     
+    public function setApiKey($value) 
+    {
+        if (!Zend_Validate::is($value, 'Alnum')) {
+            throw new InvalidArgumentException("{$value} is not a valid API key. API keys must only be letters and numbers.");
+        }
+        $this->apiKey = $value; 
+    }
     
-    public function setApiKey($string) { $this->apiKey = $string; }
+    public function setUserId($value) 
+    {
+        if (!Zend_Validate::is($value, 'Digits')) {
+            throw new InvalidArgumentException("{$value} is not a valid user id. User ids must be an integer.");
+        }
+        $this->userId = (int) $value; 
+    }
     
-    public function setUserId($id) { $this->userId = $id; }
     public function getUserId() { return $this->userId; }
     
-    public function setUserToken($token) { $this->userToken = $token; }
+    public function setUserToken($value) 
+    {
+        if (!Zend_Validate::is($value, 'Alnum')) {
+            throw new InvalidArgumentException("{$value} is not a valid access token. Access tokens must only be letters and numbers.");
+        }
+        $this->userToken = $value; 
+    }
+    
     public function getUserToken() { return $this->userToken; }
     
+    public function setTimeout($value) 
+    {
+        if (!Zend_Validate::is($value, 'Digits')) {
+            throw new InvalidArgumentException("{$value} is not a valid timeout. Timeout must be an integer.");
+        }
+        $this->timeout = (int) $value; 
+    }
     
     protected function makeRequest($url, $xml, $method)
     {
-        $client = new Zend_Http_Client($url);
+        $client = new Zend_Http_Client($url, array('timeout' => $this->timeout));
         $client->setHeaders(array(
             'Accept-encoding' => 'deflate',
             'Content-Type' => 'application/xml',
@@ -30,8 +57,13 @@ abstract class SlimTimer_Abstract
         );
         $client->setRawData($xml, 'text/xml');
         $response = $client->request($method);
+        $response = $this->parseResponse($response->getBody());
         
-        return $response->getBody();
+        if ($requestError = $this->isRequestError($response)) {
+            throw new Zend_Exception("Processing request failed. {$requestError}");
+        }
+        
+        return $response;
     }
     
     protected function parseResponse($response)
@@ -42,8 +74,9 @@ abstract class SlimTimer_Abstract
     protected function isRequestError($result)
     {
         if (isset($result->error)) {
-            return true;
+            return (string) $result->error;
         }
+        return false;
     }
     
     protected function generateRequestXml()

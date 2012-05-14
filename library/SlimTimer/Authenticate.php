@@ -6,22 +6,23 @@ class SlimTimer_Authenticate extends SlimTimer_Abstract
     protected $email;
     protected $password;
     
-    public function setEmail($email) { $this->email = $email; }
+    public function setEmail($value) 
+    {
+        if (!Zend_Validate::is($value, 'EmailAddress')) {
+            throw new InvalidArgumentException("{$value} is not an a valid email address.");
+        }
+        $this->email = $value; 
+    }
+    
     public function setPassword($password) { $this->password = $password; }
     
     public function run()
     {
         $url = $this->apiUrl . $this->apiPath;
-        $response = $this->makeRequest($url, $this->getCallXml(), 'POST');
-        $result = $this->parseResponse($response);
-        
-        if ($this->isRequestError($result) === true) {
-            return false;
-        }
+        $result = $this->makeRequest($url, $this->getCallXml(), 'POST');
         
         $this->userId = (string) $result->{'user-id'};
         $this->userToken = (string) $result->{'access-token'};
-        return true;
     }
     
     protected function getCallXml()
